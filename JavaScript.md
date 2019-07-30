@@ -772,12 +772,6 @@ export class App extend Component {};
 
 
 
-## 原型链
-
-
-
-
-
 ## **Class**
 
 ES6 提供了更接近传统语言的写法，引入了 Class（类）这个概念，作为对象的模板。通过`class`关键字，可以定义类。
@@ -1012,6 +1006,24 @@ OK。说说迭代器。当你调用一个generator时，它将返回一个迭代
 
 
 
+## JS 小技巧
 
+### 使用set进行代码去重
+
+```javascript
+const list = [1,1,2,2,5,5,7,6]
+const uniqueList = [...new Set(list)] //[1,2,5,7,6]
+```
+
+### 深拷贝
+
+可以通过JSON对象的parse和stringify
+
+```javascript
+let _obj = JSON.sringify(obj)
+obj = JSON.parse(_obj)
+```
+
+### 
 
 ​																			     整合By—GuoYF
