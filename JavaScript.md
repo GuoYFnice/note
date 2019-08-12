@@ -1,4 +1,4 @@
-# es6笔记
+# JavaScript笔记
 
 ## 闭包
 **通过函数字面量创建的函数对象包含一个连到外部上下文的连接**——**闭包**
@@ -1024,6 +1024,397 @@ let _obj = JSON.sringify(obj)
 obj = JSON.parse(_obj)
 ```
 
-### 
+
+
+## js中的类型转换
+
+```javascript
+true + false
+12 / "6"
+"number" + 15 + 3
+15 + 3 + "number"
+[1] > null
+"foo" + + "bar"
+"true" == true
+false == "false"
+null == ""
+!!"false" == !!"true"
+["x"] == "x"
+[] + null + 1
+[1,2,3] == [1,2,3]
+{} + [] + {} + [1]
+! + [] + [] + ![]
+new Date(0) - 0
+new Date(0) + 0
+```
+
+### 类型转换可以分为**隐式**类型转换和**显式**类型转换。
+
+**在 JS 中只有 3 种类型的转换**
+
+> - to string
+> - to boolean
+> - to number
+
+1. ## String 类型转换
+
+   String() 方法可以用来显式将值转为字符串，隐式转换通常在有 **+** 运算符并且有一个操作数是 string 类型时被触发
+
+   ```javascript
+   String(123) // 显式类型转换
+   
+   123 + '' // 隐式类型转换
+   //Symbol 类型转 String 类型是比较严格的，它只能被显式的转换
+   String(Symbol('symbol'))  // 'Symbol(symbol)'
+   
+   '' + Symbol('symbol')  // TypeError is thrown
+   ```
+
+2. ## Boolean 类型转换
+
+   Boolean() 方法可以用来显式将值转换成 boolean 型。
+
+   隐式类型转换通常在逻辑判断或者有逻辑运算符时被触发（|| && !）
+
+   ```javascript
+   Boolean(2)    // 显示类型转换
+   if(2) {}      // 逻辑判断触发隐式类型转换
+   !!2           // 逻辑运算符触发隐式类型转换
+   2 || 'hello'  // 逻辑运算符触发隐式类型转换
+   ```
+
+   **注意**: 逻辑运算符（比如 || 和 &&）是在内部做了 boolean 类型转换，但实际上返回的是原始操作数的值，即使他们都不是 boolean 类型。
+
+   ```javascript
+   // 返回 number 类型 123，而不是 boolean 型 true
+   // 'hello' 和 '123' 仍然在内部会转换成 boolean 型来计算表达式
+   let x = 'hello' && 123  // x === 123
+   ```
+
+   boolean 类型转换只会有 **true** 或者 **false** 两种结果。
+
+   ```javascript
+   Boolean('')           // false
+   Boolean(0)            // false  
+   Boolean(-0)           // false
+   Boolean(NaN)          // false
+   Boolean(null)         // false
+   Boolean(undefined)     // false
+   Boolean(false)        // false
+   //任何不在上面列表中的值都会转换为 true, 包括 object, function, Array, Date 等，Symbol 类型是真值，空对象和空数组也是真值
+   Boolean({})             // true
+   Boolean([])             // true
+   Boolean(Symbol())       // true
+   !!Symbol()              // true
+   Boolean(function() {})  // true
+   
+   ```
+
+   
+
+3. ## Number 类型转换
+
+   number 的隐式类型转换是比较复杂的，因为它可以在下面多种情况下被触发。
+
+   - 比较操作（>, <, <=, >=）
+   - 按位操作（| & ^ ~）
+   - 算数操作（- + * / %）， **注意**，当 + 操作存在任意的操作数是 string 类型时，不会触发 number 类型的隐式转换
+   - 一 元 + 操作
+   - 非严格相等操作（== 或者 !== ），**注意**，== 操作两个操作数都是 string 类型时，不会发生 number 类型的隐式转换
+
+   ```javascript
+   Number('123')    // 显示类型转换
+   + '123'          //  隐式类型转换
+   123 != "456"    //  隐式类型转换
+   4 > "5"        //  隐式类型转换
+   5 / null      //  隐式类型转换
+   true | 0      //  隐式类型转换
+   
+   Number(null)                   // 0
+   Number(undefined)              // NaN
+   Number(true)                   // 1
+   Number(false)                  // 0
+   Number(" 12 ")                 // 12
+   Number("-12.34")               // -12.34
+   Number("\n")                   // 0
+   Number(" 12s ")                // NaN
+   Number(123)                    // 123
+   ```
+
+   当将一个字符串转换为一个数字时，引擎首先删除前尾空格、\n、\t 字符，如果被修剪的字符串不成为一个有效的数字，则返回 NaN。如果字符串为空，则返回 0。
+
+   Number() 方法对于 null 和 undefined 的处理是不同的， null 会转换为 0, undefined 会转换为 NaN
+
+   不管是显式还是隐式转换都不能将 Symbol 类型转为 number 类型，当试图这样操作时，会抛出错误。
+
+   **注意**
+
+   1. 当将 == 应用于 null 或 undefined 时，不会发生数值转换。null 只等于 null 或 undefined，不等于其他任何值。
+   2. NaN 不等于任何值，包括它自己
+
+   ### 答案
+
+   ```javascript
+   true + false  // 1
+   ```
+
+   '+' 运算符会触发 number 类型转换对于 true 和 false
+
+   
+
+   ```javascript
+   12 / '6'  // 2
+   ```
+
+   算数运算符会把字符串 ‘6’ 转为 number 类型
+
+   
+
+   ```javascript
+   "number" + 15 + 3  // "number153"
+   ```
+
+   '+' 运算符按从左到右的顺序的执行，所以优先执行 “number” + 15, 把 15 转为 string 类型，得到 “number15” 然后同理执行 “number15” + 3
+
+   
+
+   ```javascript
+   15 + 3 + "number"  // "18number"
+   ```
+
+   15 + 3 先执行，运算符两边都是 number 类型 ，不用转换，然后执行 18 + “number” 最终得到 “18number”
+
+   
+
+   ```javascript
+   [1] > null  // true
+   
+   ==> '1' > 0
+   ==> 1 > 0
+   ==> true
+   ```
+
+   比较运算符 > 执行 number 类型隐式转换。
+
+   
+
+   ```javascript
+   "foo" + + "bar"  // "fooNaN"
+   
+   ==> "foo" + (+"bar")
+   ==> "foo" + NaN
+   ==> "fooNaN"
+   ```
+
+   一元 + 运算符比二元 + 运算符具有更高的优先级。所以 + bar表达式先求值。一元加号执行字符串“bar” 的 number 类型转换。因为字符串不代表一个有效的数字，所以结果是NaN。在第二步中，计算表达式'foo' + NaN。
+
+   
+
+   ```javascript
+   'true' == true // false
+   
+   ==> NaN == 1
+   ==> false
+   
+   'false' == false // false
+   
+   ==> NaN == 0
+   ==> false
+   ```
+
+   == 运算符执行 number 类型转换，'true' 转换为 NaN， boolean 类型 true 转换为 1
+
+   
+
+   ```javascript
+   null == ''  // false
+   ```
+
+   null 不等于任何值除了 null 和 undefined
+
+   
+
+   ```javascript
+   !!"false" == !!"true"  // true
+   
+   ==> true == true
+   ==> true
+   ```
+
+   !! 运算符将字符串 'true' 和 'false' 转为 boolean 类型 true, 因为不是空字符串，然后两边都是 boolean 型不在执行隐式转换操作。
+
+   
+
+   ```javascript
+   ['x'] == 'x'  // true
+   ```
+
+   == 运算符对数组类型执行 number 转换，先调用对象的 valueOf() 方法，结果是数组本身，不是原始类型值，所以执行对象的 toString() 方法，得到字符串 'x'
+
+   
+
+   ```javascript
+   [] + null + 1  // 'null1'
+   
+   ==> '' + null + 1
+   ==> 'null' + 1
+   ==> 'null1'
+   ```
+
+   '+' 运算符执行 number 类型转换，先调用对象的 valueOf() 方法，结果是数组本身，不是原始类型值，所以执行对象的 toString() 方法，得到字符串 ''， 接下来执行表达式 '' + null + 1。
+
+   
+
+   ```javascript
+   0 || "0" && {}  // {}
+   
+   ==> (0 || '0') && {}
+   ==> (false || true) && true
+   ==> true && true
+   ==> true
+   ```
+
+   逻辑运算符 || 和 && 将值转为 boolean 型，但是会返回原始值（不是 boolean）。
+
+   
+
+   ```javascript
+   [1,2,3] == [1,2,3]  // false
+   ```
+
+   当运算符两边类型相同时，不会执行类型转换，两个数组的内存地址不一样，所以返回 false
+
+   
+
+   ```javascript
+   {} + [] + {} + [1]  // '0[object Object]1'
+   
+   ==> +[] + {} + [1]
+   ==> 0 + {} + [1]
+   ==> 0 + '[object Object]' + '1'
+   ==> '0[object Object]1'
+   ```
+
+   所有的操作数都不是原始类型，所以会按照从左到右的顺序执行 number 类型的隐式转换， object 和 array 类型的 valueOf() 方法返回它们本身，所以直接忽略，执行 toString() 方法。 这里的技巧是，第一个 {} 不被视为 object，而是块声明语句，因此它被忽略。计算从 +[] 表达式开始，该表达式通过toString()方法转换为空字符串，然后转换为0。
+
+   
+
+   ```javascript
+   ! + [] + [] + ![] // 'truefalse'
+   
+   ==> !(+[]) + [] + (![])
+   ==> !0 + [] + false
+   ==> true + [] + false
+   ==> true + '' + false
+   ==> 'truefalse'
+   ```
+
+   一元运算符优先执行，+[] 转为 number 类型 0，![] 转为 boolean 型 false。
+
+   
+
+   ```javascript
+   new Date(0) - 0  // 0
+   
+   ==> 0 - 0
+   ==> 0
+   ```
+
+   '-' 运算符执行 number 类型隐式转换对于 Date 型的值，Date.valueOf() 返回到毫秒的时间戳。
+
+   
+
+   ```javascript
+   new Date(0) + 0
+   
+   ==> 'Thu Jan 01 1970 02:00:00 GMT+0200 (EET)' + 0
+   ==> 'Thu Jan 01 1970 02:00:00 GMT+0200 (EET)0'
+   ```
+
+   '+' 运算符触发默认转换，因此使用 toString() 方法，而不是 valueOf()
+
+   
+
+   ## js运算优先级
+
+| 优先级                                                       | 运算类型                                                     | 关联性        | 运算符      |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :------------ | :---------- |
+| 20                                                           | [`圆括号`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Grouping) | n/a           | `( … )`     |
+| 19                                                           | [`成员访问`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Property_Accessors#点符号表示法) | 从左到右      | `… . …`     |
+| [`需计算的成员访问`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Property_Accessors#括号表示法) | 从左到右                                                     | `… [ … ]`     |             |
+| [`new`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new) (带参数列表) | n/a                                                          | `new … ( … )` |             |
+| [函数调用](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Functions) | 从左到右                                                     | `… ( … )`     |             |
+| 18                                                           | [new](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new) (无参数列表) | 从右到左      | `new …`     |
+| 17                                                           | [后置递增](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Increment)(运算符在后) | n/a           | `… ++`      |
+| [后置递减](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Decrement)(运算符在后) | `… --`                                                       |               |             |
+| 16                                                           | [逻辑非](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_NOT) | 从右到左      | `! …`       |
+| [按位非](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_NOT) | `~ …`                                                        |               |             |
+| [一元加法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Unary_plus) | `+ …`                                                        |               |             |
+| [一元减法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Unary_negation) | `- …`                                                        |               |             |
+| [前置递增](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Increment) | `++ …`                                                       |               |             |
+| [前置递减](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Decrement) | `-- …`                                                       |               |             |
+| [typeof](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/typeof) | `typeof …`                                                   |               |             |
+| [void](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/void) | `void …`                                                     |               |             |
+| [delete](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/delete) | `delete …`                                                   |               |             |
+| [await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) | `await …`                                                    |               |             |
+| 15                                                           | [幂](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Exponentiation) | 从右到左      | `… ** …`    |
+| 14                                                           | [乘法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Multiplication) | 从左到右      | `… * …`     |
+| [除法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Division) | `… / …`                                                      |               |             |
+| [取模](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Remainder) | `… % …`                                                      |               |             |
+| 13                                                           | [加法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Addition) | 从左到右      | `… + …`     |
+| [减法](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Arithmetic_Operators#Subtraction) | `… - …`                                                      |               |             |
+| 12                                                           | [按位左移](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators) | 从左到右      | `… << …`    |
+| [按位右移](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators) | `… >> …`                                                     |               |             |
+| [无符号右移](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators) | `… >>> …`                                                    |               |             |
+| 11                                                           | [小于](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than_operator) | 从左到右      | `… < …`     |
+| [小于等于](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Less_than__or_equal_operator) | `… <= …`                                                     |               |             |
+| [大于](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_operator) | `… > …`                                                      |               |             |
+| [大于等于](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Greater_than_or_equal_operator) | `… >= …`                                                     |               |             |
+| [in](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/in) | `… in …`                                                     |               |             |
+| [instanceof](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/instanceof) | `… instanceof …`                                             |               |             |
+| 10                                                           | [等号](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality) | 从左到右      | `… == …`    |
+| [非等号](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Inequality) | `… != …`                                                     |               |             |
+| [全等号](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Identity) | `… === …`                                                    |               |             |
+| [非全等号](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Nonidentity) | `… !== …`                                                    |               |             |
+| 9                                                            | [按位与](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_AND) | 从左到右      | `… & …`     |
+| 8                                                            | [按位异或](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_XOR) | 从左到右      | `… ^ …`     |
+| 7                                                            | [按位或](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators#Bitwise_OR) | 从左到右      | `… | …`     |
+| 6                                                            | [逻辑与](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_AND) | 从左到右      | `… && …`    |
+| 5                                                            | [逻辑或](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Logical_Operators#Logical_OR) | 从左到右      | `… || …`    |
+| 4                                                            | [条件运算符](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) | 从右到左      | `… ? … : …` |
+| 3                                                            | [赋值](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Assignment_Operators) | 从右到左      | `… = …`     |
+| `… += …`                                                     |                                                              |               |             |
+| `… -= …`                                                     |                                                              |               |             |
+| `… *= …`                                                     |                                                              |               |             |
+| `… /= …`                                                     |                                                              |               |             |
+| `… %= …`                                                     |                                                              |               |             |
+| `… <<= …`                                                    |                                                              |               |             |
+| `… >>= …`                                                    |                                                              |               |             |
+| `… >>>= …`                                                   |                                                              |               |             |
+| `… &= …`                                                     |                                                              |               |             |
+| `… ^= …`                                                     |                                                              |               |             |
+| `… |= …`                                                     |                                                              |               |             |
+| 2                                                            | [yield](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield) | 从右到左      | `yield …`   |
+| [yield*](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/yield*) | `yield* …`                                                   |               |             |
+| 1                                                            | [展开运算符](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Spread_operator) | n/a           | `...` …     |
+| 0                                                            | [逗号](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Comma_Operator) | 从左到右      | `… , …`     |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ​																			     整合By—GuoYF
