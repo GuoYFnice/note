@@ -562,7 +562,7 @@ export default {
     }
   }
 }
-复制代码// 父组件
+// 父组件
 <template>
   <component-a ref="comA"></component-a>
 </template>

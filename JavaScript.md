@@ -768,7 +768,7 @@ export class App extend Component {};
 - `array.splice(start,deleteCount,item...)`——移除元素，并用新的元素代替
 - `array.unshift()`——从头加入一个返回数组长度
 
-
+**对一个空数组无论参数中的函数返回什么，调用 some 都会返回 false， 调用 every 都会返回 true**
 
 
 
