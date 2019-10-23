@@ -38,3 +38,77 @@ const [count, setCount] = useState(0);
 
 
 
+## react组件实例
+
+### DataList
+
+使用传参控制列表是否为有序
+
+```react
+function DataList({ isOrdered , data }){
+	const list = data.map((val,i) => <li key={`${i}_${val}`>{val}</li>);
+    return isOrdered ? <ol>{list}</ol> : <ul>{list}</ul>
+}
+```
+
+### DataTable
+
+通过map对数据进行表格展示
+
+```react
+function DataTable({ data }) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((val, i) => (
+          <tr key={`${i}_${val}`}>
+            <td>{i}</td>
+            <td>{val}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+### MappedTable
+
+寻找具有指定键值的table
+
+```react
+function MappedTable({ data, propertyNames }) {
+  let filteredData = data.map(v =>
+    Object.keys(v)
+      .filter(k => propertyNames.includes(k))
+      .reduce((acc, key) => ((acc[key] = v[key]), acc), {})
+  );
+  return (
+    <table>
+      <thead>
+        <tr>
+          {propertyNames.map(val => (
+            <th key={`h_${val}`}>{val}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {filteredData.map((val, i) => (
+          <tr key={`i_${i}`}>
+            {propertyNames.map(p => (
+              <td key={`i_${i}_${p}`}>{val[p]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+

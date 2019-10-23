@@ -639,17 +639,82 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。每一个 
 
 
 
+## computer中的getter和setter
+
+官方示例
+
+```vue
+computed: {
+  fullName: {
+    // getter
+    get: function () {
+      return this.firstName + ' ' + this.lastName
+    },
+    // setter
+    set: function (newValue) {
+      var names = newValue.split(' ')
+      this.firstName = names[0]
+      this.lastName = names[names.length - 1]
+    }
+  }
+}
+```
+
+
+
+## watch监听对象
+
+对obj的某一个属性进行监听，可以直接怼obj.key进行监听
+
+```
+watch: {
+    'obj.question': function (newQuestion, oldQuestion) {
+      this.answer = 'Waiting for you to stop typing...'
+      this.debouncedGetAnswer()
+    }
+  }
+```
+
+如果进行深层监听
+
+```
+watch: {
+    obj: {
+        handler: function (newQuestion, oldQuestion) {
+          this.answer = 'Waiting for you to stop typing...'
+          this.debouncedGetAnswer()
+        },
+        deep: true,
+        immediate: true
+    }
+  }
+```
+
+ immediate的作用：当值第一次进行绑定的时候并不会触发watch监听，使用immediate则可以在最初绑定的时候执行。 
 
 
 
 
 
+## $nextTick
 
+在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。(官网解释)
+ 解决的问题：有些时候在改变数据后立即要对dom进行操作，此时获取到的dom仍是获取到的是数据刷新前的dom，无法满足需要，这个时候就用到了$nextTick。
 
+```
+// 修改数据
+vm.msg = 'Hello'
+// DOM 还没有更新
+Vue.nextTick(function () {
+  // DOM 更新了
+})
 
-
-
-
+// 作为一个 Promise 使用 
+Vue.nextTick()
+  .then(function () {
+    // DOM 更新了
+  })
+```
 
 
 
