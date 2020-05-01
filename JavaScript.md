@@ -1024,6 +1024,13 @@ let _obj = JSON.sringify(obj)
 obj = JSON.parse(_obj)
 ```
 
+### 过滤空值
+
+```
+let result1 = [1, 2, 0, undefined, null, false, ''].filter(Boolean);
+console.log(result1);[1,2]
+```
+
 
 
 ## js中的类型转换
