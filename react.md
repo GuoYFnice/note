@@ -1,5 +1,181 @@
 # react
 
+## 基本内容
+
+```react
+import React, { Component } from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+
+class Header extends Component {
+  render () {
+    return (
+      <div>
+        <h1>React 小书</h1>
+      </div>
+    )
+  }
+}
+
+ReactDOM.render(
+  <Header />,
+  document.getElementById('root')
+)
+```
+
+### ReactDOM
+
+`ReactDOM` 可以帮助我们把 React 组件渲染到页面上去
+
+ReactDOM.render` 功能就是把组件渲染并且构造 DOM 树，然后插入到页面上某个特定的元素上（在这里是 id 为 `root` 的 `div` 元素）。`
+
+只要你要写 React.js 组件，那么就必须要引入这两个东西(React/组件父类component)
+
+
+
+### JSX
+
+***所谓的 JSX 其实就是 JavaScript 对象***
+
+**JSX到页面的过程：JSX先通过babel编译和react.js构造成为JavaScript对象在通过reactdom.render变成dom元素，最后插入页面**
+
+因为class是JavaScript的关键字，所以使用className来进行增加类名
+
+***自定义的组件都必须要用大写字母开头，普通的 HTML 标签都用小写字母开头***
+
+ *on\* 的事件监听只能用在普通的 HTML 的标签上，而不能用在组件标签上*
+
+
+
+### setState
+
+`setState` 方法由父类 `Component` 所提供。*当我们调用这个函数的时候，React.js 会更新组件的状态 state ，并且重新调用 render 方法，然后再把 render 方法所渲染的最新的内容显示到页面上*。
+
+**当调用setState是，react.js不会立刻修改state，而是把这个对象放到一个更新队列里面，稍后才会从队列当中把新的状态提取出来合并到 `state` 当中，然后再触发组件更新。**
+
+例如：
+
+```javascript
+...
+  handleClickOnLikeButton () {
+    this.setState({ count: 0 }) // => this.state.count 还是 undefined
+    this.setState({ count: this.state.count + 1}) // => undefined + 1 = NaN
+    this.setState({ count: this.state.count + 2}) // => NaN + 2 = NaN
+  }
+...
+```
+
+上面的代码的运行结果并不能达到我们的预期，我们希望 `count` 运行结果是 `3` ，可是最后得到的是 `NaN`。但是这种后续操作依赖前一个 `setState` 的结果的情况并不罕见。
+
+这里就自然地引出了 `setState` 的第二种使用方式，可以接受一个函数作为参数。React.js 会把上一个 `setState` 的结果传入这个函数，你就可以使用该结果进行运算、操作，然后返回一个对象作为更新 `state` 的对象：
+
+```javascript
+...
+  handleClickOnLikeButton () {
+    this.setState((prevState) => {
+      return { count: 0 }
+    })
+    this.setState((prevState) => {
+      return { count: prevState.count + 1 } // 上一个 setState 的返回是 count 为 0，当前返回 1
+    })
+    this.setState((prevState) => {
+      return { count: prevState.count + 2 } // 上一个 setState 的返回是 count 为 1，当前返回 3
+    })
+    // 最后的结果是 this.state.count 为 3
+  }
+```
+
+setstate可以接受两种格式（对象和函数）
+
+**对象：传入一个对象的时候，这个对象表示该组件的新状态。但你只需要传入需要更新的部分就可以了，而不需要传入整个对象**
+
+**函数：可以接受一个函数作为参数。React.js 会把上一个 `setState` 的结果传入这个函数**
+
+渲染多个setstate时不用担心性能，因为React.js 内部会把 JavaScript 事件循环中的消息队列的同一个消息中的 `setState` 都进行合并以后再重新渲染组件
+
+
+
+### props
+
+1. 为了使得组件的可定制性更强，在使用组件的时候，可以在标签上加属性来传入配置参数。
+2. 组件可以在内部通过 `this.props` 获取到配置参数，组件可以根据 `props` 的不同来确定自己的显示形态，达到可配置的效果。
+3. 可以通过给组件添加类属性 `defaultProps` 来配置默认参数。
+4. `props` 一旦传入，你就不可以在组件内部对它进行修改。但是你可以通过父组件主动重新渲染的方式来传入新的 `props`，从而达到更新的效果。
+
+
+
+**dangerouslySetHTML**
+
+为了预防xss攻击，在 React.js 当中所有的表达式插入的内容都会被自动转义
+
+需要给 `dangerouslySetInnerHTML` 传入一个对象，这个对象的 `__html` 属性值就相当于元素的 `innerHTML`，这样我们就可以动态渲染元素的 `innerHTML` 结构了。
+
+
+
+## 生命周期
+
+React 16.8 +的生命周期分为三个阶段,分别是挂载阶段、更新阶段、卸载阶段
+
+### 挂载阶段
+
+ *React.js 将组件渲染，并且构造 DOM 元素然后塞入页面的过程称为组件的挂载*
+
+```
+-> constructor()
+-> componentWillMount()
+-> render()
+// 然后构造 DOM 元素插入页面
+-> componentDidMount()
+// 即将从页面中删除
+-> componentWillUnmount()
+// 从页面中删除
+```
+
+`componentWillMount` 和 `componentDidMount` 都是可以像 `render` 方法一样自定义在组件的内部。挂载的时候，React.js 会在组件的 `render` 之前调用 `componentWillMount`，在 DOM 元素塞入页面以后调用 `componentDidMount`。
+
+
+
+**我们一般会把组件的 `state` 的初始化工作放在 `constructor` 里面去做；在 `componentWillMount` 进行组件的启动工作，例如 Ajax 数据拉取、定时器的启动；组件从页面上销毁的时候，有时候需要一些数据的清理，例如定时器的清理，就会放在 `componentWillUnmount` 里面去做。**
+
+**说一下本节没有提到的 `componentDidMount` 。一般来说，有些组件的启动工作是依赖 DOM 的，例如动画的启动，而 `componentWillMount` 的时候组件还没挂载完成，所以没法进行这些启动工作，这时候就可以把这些操作放在 `componentDidMount` 当中。**
+
+
+
+### 更新阶段
+
+更新阶段是`setState` 导致 React.js 重新渲染组件并且把组件的变化应用到 DOM 元素上的过程，*这是一个组件的变化过程*
+
+1. `shouldComponentUpdate(nextProps, nextState)`：你可以通过这个方法控制组件是否重新渲染。如果返回 `false` 组件就不会重新渲染。这个生命周期在 React.js 性能优化上非常有用。
+2. `componentWillReceiveProps(nextProps)`：组件从父组件接收到新的 `props` 之前调用。
+3. `componentWillUpdate()`：组件开始重新渲染之前调用。
+4. `componentDidUpdate()`：组件重新渲染并且把更改变更到真实的 DOM 以后调用。
+
+### 卸载阶段
+
+```
+即将从页面删除
+->componentWillUnmount
+从页面删除
+```
+
+### 
+
+
+
+
+
+## 高阶组件
+
+***高阶组件就是一个函数，传给它一个组件，它返回一个新的组件。***
+
+*其实就是为了组件之间的代码复用*。组件可能有着某些相同的逻辑，把这些逻辑抽离出来，放到高阶组件中进行复用。*高阶组件内部的包装组件和被包装组件之间通过 props 传递数据*
+
+
+
+## context
+
+
+
 ## hooks
 
 什么是hooks
@@ -35,6 +211,14 @@ const [count, setCount] = useState(0);
 > *Effect Hook* 可以让你在函数组件中执行副作用操作
 >
 > 如果你熟悉 React class 的生命周期函数，你可以把 `useEffect` Hook 看做 `componentDidMount`，`componentDidUpdate` 和 `componentWillUnmount` 这三个函数的组合。
+
+
+
+
+
+
+
+
 
 
 
