@@ -299,7 +299,22 @@ module.exports = {
 
 
 
+uglifyJsPlugin 用来对js文件进行压缩，从而减小js文件的大小，加速load速度。
+uglifyJsPlugin会拖慢webpack的编译速度，所有建议在开发简单将其关闭，部署的时候再将其打开。
 
+```
+new UglifyJsPlugin({
+      uglifyOptions: {
+        compress: {
+          warnings: false,
+          drop_console: true,//console
+          pure_funcs: ['console.log']//移除console
+        }
+      },
+      sourceMap: config.build.productionSourceMap,
+      parallel: true
+    }),
+```
 
 
 
