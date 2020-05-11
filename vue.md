@@ -617,8 +617,6 @@ Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。每一个 
 
 实现一个订阅器 Dep：订阅器采用 发布-订阅 设计模式，用来收集订阅者 Watcher，对监听器 Observer 和 订阅者 Watcher 进行统一管理。
 
-![img](https://user-gold-cdn.xitu.io/2019/8/19/16ca75871f729d89?imageslim)
-
 
 
 ### vue对对象和数组的监听，是要通过对数组和对象进行遍历递归
